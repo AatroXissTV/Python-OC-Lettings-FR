@@ -1,6 +1,6 @@
 # app_profiles/views.py
 # created 01/04/2022 at 10:42 by Antoine 'AatroXiss' BEAUDESSON
-# last modified 01/04/2022 at 10:42 by Antoine 'AatroXiss' BEAUDESSON
+# last modified 07/04/2022 at 10:50 by Antoine 'AatroXiss' BEAUDESSON
 
 """ app_lettings/views.py:
     - *
@@ -10,7 +10,7 @@ __author__ = "Antoine 'AatroXiss' BEAUDESSON"
 __copyright__ = "Copyright 2021, Antoine 'AatroXiss' BEAUDESSON"
 __credits__ = ["Antoine 'AatroXiss' BEAUDESSON"]
 __license__ = ""
-__version__ = "0.0.3"
+__version__ = "0.0.5"
 __maintainer__ = "Antoine 'AatroXiss' BEAUDESSON"
 __email__ = "antoine.beaudesson@gmail.com"
 __status__ = "Development"
@@ -42,6 +42,8 @@ def profiles_index(request):
 def profile(request, username):
     """
     This function renders the profile page.
+
+    :arg username: The username of the profile to render.
     """
     profile = Profile.objects.get(username=username)
     context = {
