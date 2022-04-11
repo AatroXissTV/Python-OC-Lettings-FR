@@ -9,3 +9,6 @@
 
 # pytest cache
 .pytest_cache/
+
+# Dockerfile
+Dockerfile
