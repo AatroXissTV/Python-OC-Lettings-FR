@@ -1,5 +1,9 @@
-**/__pycache__
+# pytest cache
+.pytest_cache/
+
+# pycache
 *.pyc
+__pycache__/
 
 # virtual environment
 .venv/
@@ -7,5 +11,7 @@
 # visual studio code
 .vscode/
 
-# pytest cache
-.pytest_cache/
+# sqlite
+sqldiff.exe
+sqlite3_analyzer.exe
+sqlite3.exe
