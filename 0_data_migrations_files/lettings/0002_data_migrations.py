@@ -2,6 +2,7 @@
 
 from django.db import migrations
 
+
 def migrate_letting_data(apps, schema_editor):
     OldLetting = apps.get_model('oc_lettings_site', 'Letting')
     NewLetting = apps.get_model('app_lettings', 'Letting')
@@ -11,6 +12,7 @@ def migrate_letting_data(apps, schema_editor):
             title=old_letting_instance.title,
             address=Address.objects.get(id=old_letting_instance.address.id)
         )
+
 
 def migrate_adress_data(apps, schema_editor):
     OldAddress = apps.get_model('oc_lettings_site', 'Address')
@@ -24,6 +26,7 @@ def migrate_adress_data(apps, schema_editor):
             zip_code=old_address_instance.zip_code,
             country_iso_code=old_address_instance.country_iso_code
         )
+
 
 class Migration(migrations.Migration):
 
