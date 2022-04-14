@@ -42,7 +42,7 @@ workflows:
   main:
     jobs:
       - build-and-test
-      - containerize
+      - containerize:
         requires:
           - build-and-test
         filters:
