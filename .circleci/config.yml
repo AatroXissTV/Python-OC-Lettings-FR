@@ -1,1 +1,50 @@
 version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - run:
+          name: "Initialize environment and install dependencies"
+          command: |
+            python -m venv .venv
+            . .venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: "Run tests with coverage"
+          command: |
+            . .venv/bin/activate
+            pytest --cov=.
+            coverage report
+      - run:
+          name: "Linting"
+          command: |
+            . .venv/bin/activate
+            flake8 .
+  containerize:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: "containerize"
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker build -t image_oc_letting .
+            docker tag image_oc_letting $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
+            docker push $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
+
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
+      - containerize
+        requires:
+          - build-and-test
+        filters:
+          branches:
+            only: master
