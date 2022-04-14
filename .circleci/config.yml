@@ -37,14 +37,14 @@ jobs:
             docker tag image_oc_letting $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
             docker push $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
 
-
 workflows:
   main:
     jobs:
       - build-and-test
       - containerize:
-        requires:
-          - build-and-test
-        filters:
-          branches:
-            only: master
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - master
