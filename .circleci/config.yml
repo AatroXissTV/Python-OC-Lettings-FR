@@ -36,6 +36,18 @@ jobs:
             docker build -t image_oc_letting .
             docker tag image_oc_letting $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
             docker push $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
+  deploy:
+    docker:
+      - image: cimg/python:3.10.2
+    steps:
+      - checkout
+      - run:
+          name: "Deploy docker image to heroku"
+          command: |
+            . .venv/bin/activate
+            heroku container:login
+            heroku container:push web -a oc_letting
+            heroku container:release web -a oc_letting
 
 workflows:
   main:
@@ -44,6 +56,14 @@ workflows:
       - containerize:
           requires:
             - build-and-test
+          filters:
+            branches:
+              only:
+                - master
+      - deploy:
+          requires:
+            - build-and-test
+            - containerize
           filters:
             branches:
               only:
