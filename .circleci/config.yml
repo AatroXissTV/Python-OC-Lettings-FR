@@ -13,8 +13,8 @@ jobs:
       - run:
           name: Initialize venv / Install deps
           command: |
-            python -m venv venv
-            . venv/bin/activate
+            python -m venv .venv
+            . .sssssssvenv/bin/activate
             pip install -r requirements.txt
       - save_cache:
           key: v1-{{ .Branch }}-{{ checksum "requirements.txt" }}
@@ -39,12 +39,12 @@ jobs:
       - checkout
       - setup-remote-docker
       - run:
-        name: Setup remote docker
-        command: |
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          docker build -t image_oc_lettings .
-          docker tag image_oc_lettings $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
-          docker push $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
+          name: Setup remote docker
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_LOGIN --password-stdin
+            docker build -t image_oc_lettings .
+            docker tag image_oc_lettings $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
+            docker push $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
 
   deploy:
     machine:
