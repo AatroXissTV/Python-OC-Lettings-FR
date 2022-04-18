@@ -1,4 +1,6 @@
 import os
+import environ
+from django.core.management.utils import get_random_secret_key
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -10,11 +12,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fp$9^593hsriajg$_%=5trot9g!1qa@ew(o-1#@=&4%=hp46(s'
+SECRET_KEY = env('DJANGO_SECRET_KEY', default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(env('DEBUG', default=0))
 
 ALLOWED_HOSTS = []
 
@@ -115,7 +121,7 @@ STATIC_URL = '/static/'
 
 # sentry
 sentry_sdk.init(
-    dsn="https://a1809ad9dca24ecc932f354ab27f3af8@o1174582.ingest.sentry.io/6342036",
+    dsn=env('SENTRY_DSN'),
     integrations=[DjangoIntegration()],
 
     # Set traces_sample_rate to 1.0 to capture 100%

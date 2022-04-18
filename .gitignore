@@ -17,4 +17,4 @@ sqlite3_analyzer.exe
 sqlite3.exe
 
 # secret.py
-secret.py
+oc_lettings_site/.env
