@@ -73,7 +73,7 @@ workflows:
       - build-and-test
       - containerize:
           requires:
-            - build-and-test
+            - build-n-test
           filters:
             branches:
               only:
