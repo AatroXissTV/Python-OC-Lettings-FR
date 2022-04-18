@@ -41,8 +41,7 @@ jobs:
           name: Setup remote docker
           command: |
             echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_LOGIN --password-stdin
-            docker build -t image_oc_lettings .
-            docker tag image_oc_lettings $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
+            docker build --tag $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1 .
             docker push $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
 
   deploy:
