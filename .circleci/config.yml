@@ -1,70 +1,88 @@
 version: 2.1
 
 jobs:
-  build-and-test:
+
+  build-n-test:
     docker:
       - image: cimg/python:3.10.2
+    resource_class: small
     steps:
       - checkout
+      - restore_cache:
+        key: v1-cache-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
-          name: "Initialize environment and install dependencies"
-          command: |
-            python -m venv .venv
-            . .venv/bin/activate
-            pip install -r requirements.txt
+        name: Initialize environment & install dependencies
+        command: |
+          python -m venv .venv
+          . .venv/bin/activate
+          pip install -r requirements.txt
+      - save_cache:
+        key: v1-cache-{{ .Branch }}-{{ checksum "requirements.txt" }}
+        paths:
+          - ".venv"
       - run:
-          name: "Run tests with coverage"
-          command: |
-            . .venv/bin/activate
-            pytest --cov=.
-            coverage report
+        name: Run tests with coverage
+        command: |
+          . .venv/bin/activate
+          pytest --cov=.
+          coverage report
       - run:
-          name: "Linting"
-          command: |
-            . .venv/bin/activate
-            flake8
+        name: Run linters
+        command: |
+          . .venv/bin/activate
+          flake8 .
+
   containerize:
     docker:
       - image: cimg/python:3.10.2
+    resource_class: medium
     steps:
       - checkout
-      - setup_remote_docker
+      - setup-remote-docker
       - run:
-          name: "containerize"
-          command: |
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker build -t image_oc_letting .
-            docker tag image_oc_letting $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
-            docker push $DOCKER_USERNAME/oc_letting:$CIRCLE_SHA1
+        name: Setup remote docker
+        command: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          docker build -t image_oc_lettings .
+          docker tag image_oc_lettings $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
+          docker push $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
+
   deploy:
-    docker:
-      - image: cimg/python:3.10.2
+    machine:
+      image: ubuntu-2004:current
+    resource_class: medium
     steps:
       - checkout
       - run:
-          name: "Deploy docker image to heroku"
-          command: |
-            . .venv/bin/activate
-            heroku container:login
-            heroku container:push web -a oc_letting
-            heroku container:release web -a oc_letting
+        name: Deploy Docker image to Heroku
+        command: |
+          sudo curl https://cli-assets.heroku.com/install.sh | sh
+          HEROKU_API_KEY=$HEROKU_API_KEY heroku container:login
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku config:set DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY -a $HEROKU_APP_NAME
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku config:set SENTRY_DSN=$SENTRY_DSN -a $HEROKU_APP_NAME
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku config:set DEBUG=0 -a $HEROKU_APP_NAME
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:push -a $HEROKU_APP_NAME web
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release -a $HEROKU_APP_NAME web
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku run python manage.py migrate -a $HEROKU_APP_NAME
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku run python manage.py loaddata data.json -a $HEROKU_APP_NAME
+
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build-n-test
       - containerize:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                - master
+        requires:
+          - build-n-test
+        filters:
+          branches:
+            only: master
+              - master
       - deploy:
-          requires:
-            - build-and-test
-            - containerize
-          filters:
-            branches:
-              only:
-                - master
+        requires:
+          - build-n-test
+          - containerize
+        filters:
+          branches:
+            only: master
+              - master

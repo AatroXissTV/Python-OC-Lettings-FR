@@ -2,7 +2,6 @@ from django.core.validators import (
     MaxValueValidator,
     MinLengthValidator
 )
-
 from django.db import models
 
 
