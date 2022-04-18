@@ -32,9 +32,8 @@ jobs:
             pytest --cov=.
 
   containerize:
-    docker:
-      - image: cimg/python:3.10.2
-    resource_class: medium
+    machine: true
+    # resource_class: medium
     steps:
       - checkout
       - run:
