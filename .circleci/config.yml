@@ -70,19 +70,19 @@ jobs:
 workflows:
   main:
     jobs:
-      - build-n-test
+      - build-and-test
       - containerize:
-        requires:
-          - build-n-test
-        filters:
-          branches:
-            only: master
-              - master
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - master
       - deploy:
-        requires:
-          - build-n-test
-          - containerize
-        filters:
-          branches:
-            only: master
-              - master
+          requires:
+            - build-and-test
+            - containerize
+          filters:
+            branches:
+              only:
+                - master
