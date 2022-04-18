@@ -70,7 +70,7 @@ jobs:
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build-n-test
       - containerize:
           requires:
             - build-n-test
