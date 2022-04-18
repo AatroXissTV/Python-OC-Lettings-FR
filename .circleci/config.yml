@@ -37,7 +37,6 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-      - setup-remote-docker
       - run:
           name: Setup remote docker
           command: |
