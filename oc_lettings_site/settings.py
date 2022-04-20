@@ -1,9 +1,17 @@
+# standard library import
 import os
+
+# django import
+from django.core.management.utils import get_random_secret_key
+
+
+# third party import
 import environ
 import dj_database_url
-from django.core.management.utils import get_random_secret_key
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+
+# local import
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
