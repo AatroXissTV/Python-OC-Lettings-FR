@@ -1,14 +1,13 @@
 FROM python:3.10-slim
-WORKDIR /usr/src/app
+WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV SENTRY_DSN $SENTRY_DSN
-COPY . .
-RUN \
-  apk add --no-cache postgresql-libs && \
-  apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
-  python3 -m pip install -r requirements.txt --no-cache-dir && \
-  apk --purge del .build-deps && \
-  python3 manage.py collectstatic --noinput --clear && \
-  python3 manage.py dumpdata -o data.json
-CMD python manage.py runserver 0.0.0.0:8080
+COPY requirements.txt /app/requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+COPY . /app
+EXPOSE 8000
+RUN python manage.py collectstatic --noinput --clear
+RUN python dumpdata -o data.json
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
