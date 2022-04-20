@@ -35,6 +35,12 @@ jobs:
           command: |
             . .venv/bin/activate
             pytest --cov=.
+      - run:
+          name: "What was my custom Django Secret Key variable?"
+          command: echo ${DJANGO_SECRET_KEY}
+      - run:
+          name: "What was my custom Sentry DSN variable?"
+          command: echo ${SENTRY_DSN}
 
 workflows:
   complete_deploy:
