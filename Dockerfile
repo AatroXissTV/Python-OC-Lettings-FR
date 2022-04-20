@@ -6,6 +6,7 @@ ENV SENTRY_DSN $SENTRY_DSN
 COPY requirements.txt /app/requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN pip install psycopg2-binary==2.8.6
 COPY . /app
 EXPOSE 8000
 RUN python manage.py collectstatic --noinput --clear
