@@ -6,7 +6,7 @@ orbs:
 
 # Define jobs we want to run
 jobs:
-  build_and_test:
+  build-and-test:
     docker:
       - image: cimg/python:3.10.2
     resources_class: small
@@ -42,19 +42,20 @@ jobs:
 workflows:
   complete_deploy:
     jobs:
-      - build_and_test
+      - build-and-test
       - docker/publish:
           extra_build_args: '--build-arg DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY --build-arg SENTRY_DSN=$SENTRY_DSN'
           image: $DOCKER_LOGIN/oc-lettings
           tag: '$CIRCLE_SHA1,latest'
           requires:
-            - build_and_test
+            - build-and-test
           filters:
             branches:
               only: master
       - heroku/deploy-via-git:
           requires:
-            - build_and_test
+            - build-and-test
+            - docker/publish
           filters:
             branches:
               only: master
