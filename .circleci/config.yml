@@ -1,27 +1,32 @@
 version: 2.1
 
-jobs:
+orbs:
+  docker: circleci/docker@2.0.3
+  heroku: circleci/heroku@1.2.6
 
-  build-n-test:
+# Define jobs we want to run
+jobs:
+  build_and_test:
     docker:
       - image: cimg/python:3.10.2
-    resource_class: small
     steps:
       - checkout
-      - restore_cache:
-          key: v1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
-          name: Initialize venv / Install deps
+          name: Configure environment
           command: |
             python -m venv .venv
+      - run:
+          name: Upgrade pip
+          command: |
+            . .venv/bin/activate
+            pip install --upgrade pip
+      - run:
+          name: Install dependencies
+          command: |
             . .venv/bin/activate
             pip install -r requirements.txt
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ checksum "requirements.txt" }}
-          paths:
-            - ".venv"
       - run:
-          name: Linting
+          name: Check linting
           command: |
             . .venv/bin/activate
             flake8
@@ -31,52 +36,23 @@ jobs:
             . .venv/bin/activate
             pytest --cov=.
 
-  containerize:
-    machine: true
-    # resource_class: medium
-    steps:
-      - checkout
-      - run:
-          name: Setup remote docker
-          command: |
-            echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_LOGIN --password-stdin
-            docker build --tag $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1 .
-            docker push $DOCKER_LOGIN/$DOCKER_REPO:$CIRCLE_SHA1
-
-  deploy:
-    machine:
-      image: ubuntu-2004:current
-    resource_class: medium
-    steps:
-      - checkout
-      - run:
-          name: Deploy Docker image to Heroku
-          command: |
-            sudo curl https://cli-assets.heroku.com/install.sh | sh
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:login
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku config:set DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY -a $HEROKU_APP_NAME
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku config:set SENTRY_DSN=$SENTRY_DSN -a $HEROKU_APP_NAME
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku config:set DEBUG=0 -a $HEROKU_APP_NAME
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:push -a $HEROKU_APP_NAME web
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release -a $HEROKU_APP_NAME web
-            HEROKU_API_KEY=${HEROKU_TOKEN} heroku run python manage.py migrate -a $HEROKU_APP_NAME
-
 workflows:
-  main:
+  complete_deploy:
     jobs:
-      - build-n-test
-      - containerize:
+      - build_and_test
+      - docker/publish:
+          extra_build_args: '--build-arg DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY --build-arg SENTRY_DSN=$SENTRY_DSN'
+          image: $DOCKER_LOGIN/oc-lettings
+          tag: '$CIRCLE_SHA1,latest'
           requires:
-            - build-n-test
+            - build_and_test
           filters:
             branches:
-              only:
-                - master
-      - deploy:
+              only: master
+      - heroku/deploy-via-git:
           requires:
-            - build-n-test
-            - containerize
+            - build_and_test
+            - docker/publish
           filters:
             branches:
-              only:
-                - master
+              only: master

@@ -7,9 +7,9 @@ from django.core.management.utils import get_random_secret_key
 
 # third party import
 import environ
-import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+import django_heroku
 
 # local import
 
@@ -90,9 +90,6 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -131,6 +128,8 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = ()
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # sentry
 sentry_sdk.init(
@@ -139,3 +138,6 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
     send_default_pii=True
 )
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())

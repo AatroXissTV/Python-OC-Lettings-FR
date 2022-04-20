@@ -1,13 +1,17 @@
-FROM python:3.10-slim
+FROM python:3.10.2
+
 WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV SENTRY_DSN $SENTRY_DSN
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN pip install psycopg2-binary==2.8.6
-COPY . /app
-EXPOSE 8000
-RUN python manage.py collectstatic --noinput --clear
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY requirements.txt /app/
+
+# upgrade pip and install requirements.txt
+RUN pip install --upgrade pip pip \
+    && pip install -r requirements.txt
+
+# copy project
+COPY . /app/
+
+# collect static files
+RUN python manage.py collectstatic --noinput
+
+# launch server
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
