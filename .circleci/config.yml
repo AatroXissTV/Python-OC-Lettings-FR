@@ -8,7 +8,7 @@ orbs:
 jobs:
   build_and_test:
     docker:
-      -image: cimg/python:3.10.2
+      - image: cimg/python:3.10.2
     resources_class: small
     steps:
       - checkout
