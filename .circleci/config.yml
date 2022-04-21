@@ -51,10 +51,16 @@ workflows:
               only: master
       - heroku/deploy-via-git:
           post-steps:
-            - run: heroku run python manage.py migrate
-            - run: heroku run python manage.py loaddata data.json
+            - run:
+                name: Migrate and load database
+                command: |
+                python manage.py migrate
+                python manage.py loaddata data.json
           pre-steps:
-            - run: heroku run python manage.py dumpdata > data.json
+            - run:
+                name: Dump data
+                command: |
+                python manage.py dumpdata > data.json
           requires:
             - build_and_test
             - docker/publish
