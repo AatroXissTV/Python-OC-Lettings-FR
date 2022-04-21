@@ -54,13 +54,13 @@ workflows:
             - run:
                 name: Migrate and load database
                 command: |
-                python manage.py migrate
-                python manage.py loaddata data.json
+                  python manage.py migrate
+                  python manage.py loaddata data.json
           pre-steps:
             - run:
                 name: Dump data
                 command: |
-                python manage.py dumpdata > data.json
+                  python manage.py dumpdata > data.json
           requires:
             - build_and_test
             - docker/publish
