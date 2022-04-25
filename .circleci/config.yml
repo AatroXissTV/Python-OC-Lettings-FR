@@ -34,7 +34,7 @@ jobs:
           name: Run tests
           command: |
             . .venv/bin/activate
-            pytest --cov=.
+            pytest
 
 workflows:
   complete_deploy:
@@ -50,12 +50,6 @@ workflows:
             branches:
               only: master
       - heroku/deploy-via-git:
-          post-steps:
-            - run:
-                name: Migrat
-                command: |
-                  heroku run python manage.py migrate
-                  heroku run python manage.py loaddata -a data.json
           requires:
             - build_and_test
             - docker/publish
