@@ -56,11 +56,6 @@ workflows:
                 command: |
                   heroku run python manage.py migrate
                   heroku run python manage.py loaddata data.json
-          pre-steps:
-            - run:
-                name: Dump data
-                command: |
-                  heroku run python manage.py dumpdata > data.json
           requires:
             - build_and_test
             - docker/publish
