@@ -11,5 +11,8 @@ __pycache__/
 # visual studio code
 .vscode/
 
+# Db dump
+data.json
+
 # secret.py
 oc_lettings_site/.env
