@@ -22,12 +22,13 @@ Several changes have been made to the original [code](https://github.com/OpenCla
   - Code is now split in 3 folders (home, profiles, lettings)
   - Convert oc_lettings_site into a django app.
   - Design a test suite.
-4. Develop a CI/CD pipeline with [CircleCI](https://circleci.com/) and [Heroku](https://www.heroku.com/).
+3. Develop a CI/CD pipeline with [CircleCI](https://circleci.com/) and [Heroku](https://www.heroku.com/).
+
   The CI/CD pipeline is as follows:
-  1. Compiling: execute linting and tests suite
-  2. Contenerization: create and push an image to Docker Hub if commit has been made on master branch
-  3. Deployment: deploy the site with Heroku if commit has been made on master branch
-  4. Monitoring: monitor the site with [Sentry](https://sentry.io/).
+  - Compiling: execute linting and tests suite
+  - Contenerization: create and push an image to Docker Hub if commit has been made on master branch
+  - Deployment: deploy the site with Heroku if commit has been made on master branch
+  - Monitoring: monitor the site with [Sentry](https://sentry.io/).
 
 # local development
 
