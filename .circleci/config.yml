@@ -55,12 +55,6 @@ workflows:
                 name: Load data.json
                 command: |
                   python manage.py loaddata data.json
-          pre-steps:
-            - run:
-                name: Configure environment
-                command: |
-                  config:set DJANGO_SECRET_KEY=$SECRET_KEY
-                  config:set SENTRY_DSN=$SENTRY_DSN
           requires:
             - build_and_test
             - docker/publish
