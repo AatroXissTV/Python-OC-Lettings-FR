@@ -1,77 +1,82 @@
-## Résumé
+# Orange County Lettings
 
-Site web d'Orange County Lettings
+# Status
+[![CircleCI](https://circleci.com/gh/AatroXissTV/Python-OC-Lettings-FR/tree/master.svg?style=svg)](https://circleci.com/gh/AatroXissTV/Python-OC-Lettings-FR/tree/master)
 
-## Développement local
+# Quick Access
 
-### Prérequis
+1. [Informations](#informations)
+2. [Local development](#local-development)
+3. [Deployment](#deployment)
 
-- Compte GitHub avec accès en lecture à ce repository
-- Git CLI
-- SQLite3 CLI
-- Interpréteur Python, version 3.6 ou supérieure
+# Informations
 
-Dans le reste de la documentation sur le développement local, il est supposé que la commande `python` de votre OS shell exécute l'interpréteur Python ci-dessus (à moins qu'un environnement virtuel ne soit activé).
+This is the deliverable of the 13th project of Python App Development course from OpenClassrooms.
+It has been tested on **Python 3.10.2 - Django 3.0 and Windows 11**.
 
-### macOS / Linux
+Several changes have been made to the original [code](https://github.com/OpenClassrooms-Student-Center/Python-OC-Lettings-FR) to make it more readable and to make it more maintainable.
+1. Reducing technical debt with:
+  - Fixed linting errors
+  - Fixed pluralization errors
+2. Redesigned the code to be more modular. 
+  - Code is now split in 3 folders (home, profiles, lettings)
+  - Convert oc_lettings_site into a django app.
+  - Design a test suite.
+4. Develop a CI/CD pipeline with [CircleCI](https://circleci.com/) and [Heroku](https://www.heroku.com/).
+  The CI/CD pipeline is as follows:
+  1. Compiling: execute linting and tests suite
+  2. Contenerization: create and push an image to Docker Hub if commit has been made on master branch
+  3. Deployment: deploy the site with Heroku if commit has been made on master branch
+  4. Monitoring: monitor the site with [Sentry](https://sentry.io/).
 
-#### Cloner le repository
+# local development
 
-- `cd /path/to/put/project/in`
-- `git clone https://github.com/OpenClassrooms-Student-Center/Python-OC-Lettings-FR.git`
+## Prerequisites
 
-#### Créer l'environnement virtuel
+- A Github account
+- Git and SQLite3 installed on your computer
+- Python 3.10.2 installed
 
-- `cd /path/to/Python-OC-Lettings-FR`
-- `python -m venv venv`
-- `apt-get install python3-venv` (Si l'étape précédente comporte des erreurs avec un paquet non trouvé sur Ubuntu)
-- Activer l'environnement `source venv/bin/activate`
-- Confirmer que la commande `python` exécute l'interpréteur Python dans l'environnement virtuel
-`which python`
-- Confirmer que la version de l'interpréteur Python est la version 3.6 ou supérieure `python --version`
-- Confirmer que la commande `pip` exécute l'exécutable pip dans l'environnement virtuel, `which pip`
-- Pour désactiver l'environnement, `deactivate`
+## Clone the repository
 
-#### Exécuter le site
+- `cd path/to/your/project`
+- `git clone https://github.com/aatroxisstv/Python-OC-Lettings-FR.git`
 
-- `cd /path/to/Python-OC-Lettings-FR`
-- `source venv/bin/activate`
-- `pip install --requirement requirements.txt`
-- `python manage.py runserver`
-- Aller sur `http://localhost:8000` dans un navigateur.
-- Confirmer que le site fonctionne et qu'il est possible de naviguer (vous devriez voir plusieurs profils et locations).
+## Create a virtual environment
 
-#### Linting
+  - `cd path/to/your/project`
+  - `python3 -m venv .venv`
+  - `source .venv/bin/activate`
 
-- `cd /path/to/Python-OC-Lettings-FR`
-- `source venv/bin/activate`
-- `flake8`
+## Environnement variables: .env file
 
-#### Tests unitaires
+To generate a .env file please launch the `python_setup_env.py` script.
+You can modify the .env file to your needs with:
+  - URL of sentry (SENTRY_DSN).
+  - The DEBUG variable (DEBUG).
 
-- `cd /path/to/Python-OC-Lettings-FR`
-- `source venv/bin/activate`
-- `pytest`
+## Launch the project
 
-#### Base de données
+- `cd path/to/your/project`
+- `source .venv/bin/activate`
+- `pip install -r requirements.txt`
+- Make migrations: `python manage.py migrate`
+- load initial data: `python manage.py loaddata data.json`
+- launch the server: `python manage.py runserver`
+- Go to `http://127.0.0.1:8000/` in your browser.
 
-- `cd /path/to/Python-OC-Lettings-FR`
-- Ouvrir une session shell `sqlite3`
-- Se connecter à la base de données `.open oc-lettings-site.sqlite3`
-- Afficher les tables dans la base de données `.tables`
-- Afficher les colonnes dans le tableau des profils, `pragma table_info(Python-OC-Lettings-FR_profile);`
-- Lancer une requête sur la table des profils, `select user_id, favorite_city from
-  Python-OC-Lettings-FR_profile where favorite_city like 'B%';`
-- `.quit` pour quitter
+## Linting
 
-#### Panel d'administration
+- `cd path/to/your/project`
+- Activate the virtual environment: `source .venv/bin/activate`
+- launch flake8: `flake8`
 
-- Aller sur `http://localhost:8000/admin`
-- Connectez-vous avec l'utilisateur `admin`, mot de passe `Abc1234!`
+## Unit tests
 
-### Windows
+  - `cd path/to/your/project`
+  - Activate the virtual environment: `source .venv/bin/activate`
+  - launch the tests suite: `pytest`
 
-Utilisation de PowerShell, comme ci-dessus sauf :
+# Docker
 
-- Pour activer l'environnement virtuel, `.\venv\Scripts\Activate.ps1` 
-- Remplacer `which <my-command>` par `(Get-Command <my-command>).Path`
+# Deployment
