@@ -50,6 +50,16 @@ workflows:
             branches:
               only: master
       - heroku/deploy-via-git:
+          pre-steps:
+            - run:
+                name: Configure environment
+                command: |
+                  heroku config:set DJANGO_SECRET_KEY=$SECRET_KEY
+                  heroku config:set SENTRY_DSN=$SENTRY_DSN
+            - run:
+                name: Load data.json
+                command: |
+                  heroku run python manage.py loaddata data.json
           requires:
             - build_and_test
             - docker/publish
