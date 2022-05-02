@@ -178,9 +178,16 @@ To create an app in your account, serveral methods exists:
 
 For the first commit please make sur to uncomment lines on the .circleci/config.yml file.
 The commented lines will:
-- delete contentypes from the basic database.
-- Load the data in the database.
-- Set the sentry dsn as an environment variable.
+- Load the database with the data.json file
+
+Please configure these environment variables:
+
+ | Heroku variable | Description                                                                                      |
+|-------------------|--------------------------------------------------------------------------------------------------|
+| DEBUG             | 0 (or 1 for True) if True                                                                        |
+| ENV               | production                                                                                       |
+| SECRET_KEY        | Django secret key that has been generated in your .env file                                      |
+| SENTRY_DSN        | Sentry project URL                                                                               |
 
 ### Sentry
 
