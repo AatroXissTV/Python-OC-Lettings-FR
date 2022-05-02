@@ -64,7 +64,7 @@ workflows:
             - run:
                 name: set SENTRY_DSN
                 command: |
-                  heroku config:set SENTRY_DSN=$SENTRY_DSN
+                  heroku config:set -a SENTRY_DSN=$SENTRY_DSN
           requires:
             - build_and_test
             - docker/publish
