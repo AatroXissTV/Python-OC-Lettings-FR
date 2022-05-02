@@ -183,3 +183,8 @@ The commented lines will:
 - Set the sentry dsn as an environment variable.
 
 ### Sentry
+
+After creating a Sentry account, you will need to create a new Django project. You will need to get the SENTRY_DSN environment variable that can be found under the project settings > Client Keys.
+Please make sure that this variable is set in the .env file and CircleCI.
+
+Sentry error logging can be tested via the `/sentry-debug/` route.

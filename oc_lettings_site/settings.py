@@ -3,7 +3,7 @@ import os
 
 # django import
 from django.core.management.utils import get_random_secret_key
-
+from django.urls import path
 
 # third party import
 import sentry_sdk
@@ -127,7 +127,18 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ()
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
 # sentry
+def trigger_error(request):
+    division_by_zero = 1 / 0
+    return division_by_zero
+
+
+urlpatterns = [
+    path('sentry-debug/', trigger_error),
+    # ...
+]
+
 sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN'),
     integrations=[DjangoIntegration()],
