@@ -178,6 +178,7 @@ To create an app in your account, serveral methods exists:
 
 For the first commit please make sur to uncomment lines on the .circleci/config.yml file.
 The commented lines will:
+- Delete contenttypes (to avoid conflicts with the app)
 - Load the database with the data.json file
 
 Please configure these environment variables:
