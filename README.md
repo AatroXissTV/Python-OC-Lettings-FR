@@ -173,7 +173,7 @@ The CircleCI workflow will build and push the app image in the DockerHub reposit
 ### Heroku
 
 To create an app in your account, serveral methods exists:
-- Method 1: Create the app manually on the heroku website. To be hooked up to the CircleCI pipeline, the name of the app must match the HEROKU_APP_NAME environment variable set in CircleCI. AND install Heroku Postgres addon for the database.
+- Method 1: Create the app manually on the heroku website. To be hooked up to the CircleCI pipeline, the name of the app must match the HEROKU_APP_NAME environment variable set in CircleCI. AND install Heroku Postgres addon for the database. Please make sure you are logged in to Heroku before deploying the app.
 - Method 2: Create the app via the Heroku CLI. Use the command `heroku apps:create <app-name> --region eu --addons=heroku-postgresql`. The app name must match the HEROKU_APP_NAME environment variable set in CircleCI.
 
 For the first commit please make sur to uncomment lines on the .circleci/config.yml file.
